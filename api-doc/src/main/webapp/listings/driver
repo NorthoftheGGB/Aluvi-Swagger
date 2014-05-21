@@ -1,0 +1,68 @@
+{
+  "apiVersion": "1.0.0",
+  "swaggerVersion": "1.2",
+  "basePath": "/api",
+  "resourcePath": "/driver",
+  "produces": [
+    "application/json"
+  ],
+  "apis": [
+    {
+      "path": "clock/on",
+      "operations": [
+        {
+          "method": "POST",
+          "summary": "Update a driver to working status",
+          "notes": "No parameters are necessary since the server knows the driver from Authorization header",
+          "type": "Success",
+          "nickname": "clockOff",
+          "consumes": [
+            "application/json"
+          ],
+          "parameters": [
+          ],
+          "responseMessages": [
+            {
+              "code": 401,
+              "message": "Access Denied"
+            },
+            {
+              "code": 403,
+              "message": "Forbidden",
+							"description" : "This driver is not allowed to clock on"
+            }
+					]
+				}
+			]
+		},
+    {
+      "path": "clock/off",
+      "operations": [
+        {
+          "method": "POST",
+          "summary": "Update a driver to not-working status",
+          "notes": "No parameters are necessary since the server knows the driver from Authorization header",
+          "type": "Success",
+          "nickname": "clockOn",
+          "consumes": [
+            "application/json"
+          ],
+          "parameters": [
+          ],
+          "responseMessages": [
+            {
+              "code": 401,
+              "message": "Access Denied"
+            },
+            {
+              "code": 403,
+              "message": "Forbidden",
+							"description" : "This driver is not clocked on",
+							"note" : "This code might not be necessary to support"
+            }
+					]
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,68 @@
+{
+  "apiVersion": "1.0.0",
+  "swaggerVersion": "1.2",
+  "basePath": "/api",
+  "resourcePath": "/ratings",
+  "produces": [
+    "application/json"
+  ],
+  "apis": [
+ {
+      "path": "rating",
+      "operations": [
+        {
+          "method": "POST",
+          "summary": "Rate a ride",
+          "type": "Success",
+          "nickname": "publishLocation",
+          "consumes": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "rating",
+              "description": "Rating for a ride",
+              "required": true,
+              "type": "Rating",
+              "paramType": "body"
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": 401,
+              "message": "Access Denied"
+            },
+            {
+              "code": 403,
+              "message": "Forbidden",
+              "description" : "This rider is not allowed to publish location",
+							"notes" : "This code may not be used"
+            }
+          ]
+        }
+      ]
+    }
+	],
+	"models" : {
+		"Rating" : {
+			"id" : "Rating",
+			"properties" : {
+				"ride_id" : {
+					"type" : "integer",
+					"description": "Id of the ride"
+					,"required" : "true"
+				},
+				"rating" : {
+					"type" : "integer",
+					"description": "Rating, values 1 - 5"
+					,"required" : "true"
+				},
+				"comment" : {
+					"type" : "string",
+					"description": "Free text entry comment on this ride"
+					,"required" : "false"
+				}
+			}
+		}
+	}
+}

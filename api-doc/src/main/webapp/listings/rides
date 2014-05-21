@@ -1,0 +1,333 @@
+{
+  "apiVersion": "1.0.0",
+  "swaggerVersion": "1.2",
+  "basePath": "/api",
+  "resourcePath": "/rides",
+  "produces": [
+    "application/json"
+  ],
+  "apis": [
+    {
+      "path": "request",
+      "operations": [
+        {
+          "method": "POST",
+          "summary": "Request ride from scheduler",
+          "notes": "",
+          "type": "Empty",
+          "nickname": "requestRide",
+          "consumes": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "ride_request",
+              "description": "Details of the ride request",
+              "required": true,
+              "type": "RideRequest",
+              "paramType": "body"
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": 401,
+              "message": "Access Denied"
+            },
+            {
+              "code": 406,
+              "message": "Invalid Request",
+							"description" : "The ride request is invalid"
+            }
+					]
+				}
+			]
+		},
+    {
+      "path": "state/{last_received_sequence_id}",
+      "operations": [
+        {
+          "method": "GET",
+          "summary": "Get state changes since last sync",
+          "notes": "Paired with sync to sync state push message",
+					"type": "array",
+					"items": {
+						"$ref": "State"
+					},
+					"nickname": "checkState",
+					"parameters": [
+					{
+						"name": "last_received_sequence_id",
+						"description": "Last sequence id that was received by user/device",
+						"required": true,
+						"type": "string", 
+						"paramType": "path"
+					}
+          ],
+          "responseMessages": [
+            {
+              "code": 401,
+              "message": "Access Denied"
+            }
+					]
+				}
+			]
+		},
+    {
+      "path": "accepted",
+      "operations": [
+        {
+          "method": "POST",
+          "summary": "Driver has accepted a ride",
+          "notes": "",
+					"type": "Ride",
+					"nickname": "rideAccepted",
+					"parameters": [
+            {
+              "name": "ride_assignment",
+              "description": "Ride and driver",
+              "required": true,
+              "type": "RideRequestAssignment",
+              "paramType": "body"
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": 401,
+              "message": "Access Denied"
+            }
+					]
+				}
+			]
+		},
+    {
+      "path": "declined",
+      "operations": [
+        {
+          "method": "GET",
+          "summary": "Driver declined an offered ride",
+          "notes": "",
+					"type": "Message",
+					"nickname": "declinedRide",
+					"parameters": [
+					{
+						"name": "ride_assignment",
+						"description": "Ride and driver",
+						"required": true,
+						"type": "RideRequestAssignment",
+						"paramType": "body"
+					}
+          ],
+          "responseMessages": [
+            {
+              "code": 401,
+              "message": "Access Denied"
+            }
+					]
+				}
+			]
+		},
+    {
+      "path": "cancelled",
+      "operations": [
+        {
+          "method": "POST",
+          "summary": "Get state changes since last sync",
+          "notes": "",
+					"type": "Message",
+					"nickname": "cancelledRide",
+					"parameters": [
+					{
+						"name": "ride_assignment",
+						"description": "Ride and driver",
+						"required": true,
+						"type": "RideAssignment",
+						"paramType": "body"
+					}
+          ],
+          "responseMessages": [
+            {
+              "code": 401,
+              "message": "Access Denied"
+            }
+					]
+				}
+			]
+		},
+    {
+      "path": "pickup",
+      "operations": [
+        {
+          "method": "POST",
+          "summary": "The driver has picked up a rider.  If rider id is null, assume all riders for this ride have been picked up at this stop",
+          "notes": "",
+					"type": "Message",
+					"nickname": "cancelledRide",
+					"parameters": [
+					{
+						"name": "pickup",
+						"description": "Ride, driver and rider",
+						"required": true,
+						"type": "PickupEvent",
+						"paramType": "body"
+					}
+          ],
+          "responseMessages": [
+            {
+              "code": 401,
+              "message": "Access Denied"
+            }
+					]
+				}
+			]
+		}
+
+
+	],
+	"models" : {
+		"RideRequest" : {
+			"id" : "RideRequest",
+			"properties" : {
+				"customer_id" : {
+					"type" : "integer",
+					"description": "Customer Id"
+					,"required" : "true"
+				},
+				"type" : {
+					"type" : "string",
+					"description": "type of the ride request { COMMUTER, ON_DEMAND }"
+					,"required" : "true"
+				},
+				"departure_latitude" : {
+					"type" : "decimal",
+					"description": "Latitute of departure coodinate"
+					,"required" : "true"
+				},
+				"departure_longitude" : {
+					"type" : "decimal",
+					"description": "Longitude of departure coodinate"
+					,"required" : "true"
+				},
+				"departure_place_name" : {
+					"type" : "string",
+					"description": "Optional place name title, possibly from geocoding"
+					,"required" : "false"
+				},
+				"destination_latitude" : {
+					"type" : "decimal",
+					"description": "Latitute of destination coodinate"
+					,"required" : "true"
+				},
+				"destination_longitude" : {
+					"type" : "decimal",
+					"description": "Longitude of destination coodinate"
+					,"required" : "true"
+				},
+				"destination_place_name" : {
+					"type" : "string",
+					"description": "Optional place name title, possibly from geocoding"
+					,"required" : "false"
+				}
+			}
+		},
+		"State" : {
+			"id" : "State",
+			"properties" : {
+				"identifier_id" : {
+					"type" : "integer",
+					"description": "Request or Ride Id"
+					,"required" : "true"
+				},
+				"type" : {
+					"type" : "string",
+					"description": "Relevant type of object, RIDE_REQUEST or RIDE"
+					,"required" : "true"
+				},
+				"state" : {
+					"type" : "string",
+					"description": "The current status of this ride request, or ride"
+					,"required" : "true"
+				}
+			}
+		},
+		"RideAssignment" : {
+			"id" : "RideAssignment",
+			"properties" : {
+				"ride_id" : {
+					"type" : "integer",
+					"description": "Ride Id"
+					,"required" : "true"
+				},
+				"driver_id" : {
+					"type" : "integer",
+					"description": "Driver Id"
+					,"required" : "true"
+				}
+			}
+		},
+		"RideRequestAssignment" : {
+			"id" : "RideRequestAssignment",
+			"properties" : {
+				"request_id" : {
+					"type" : "integer",
+					"description": "Request Id"
+					,"required" : "true"
+				},
+				"driver_id" : {
+					"type" : "integer",
+					"description": "Driver Id"
+					,"required" : "true"
+				}
+			}
+		},
+		"Ride" : {
+			"id" : "Ride",
+			"properties" : {
+				"ride_id" : {
+					"type" : "integer",
+					"description": "Ride Id"
+					,"required" : "true"
+				},
+				"driver_id" : {
+					"type" : "integer",
+					"description": "Driver Id"
+					,"required" : "true"
+				},
+				"datetime_scheduled" : {
+					"type" : "string",
+					"description": "RFC3339 compliant timestamp"
+					,"required" : "true"
+				},
+				"meeting_point_latitude" : {
+					"type" : "decimal",
+					"description": "Latitute of meeting_point coodinate"
+					,"required" : "true"
+				},
+				"meeting_point_longitude" : {
+					"type" : "decimal",
+					"description": "Longitude of meeting_point coodinate"
+					,"required" : "true"
+				},
+				"meeting_point_place_name" : {
+					"type" : "string",
+					"description": "Optional place name title, possibly from geocoding"
+					,"required" : "false"
+				},
+				"destination_latitude" : {
+					"type" : "decimal",
+					"description": "Latitute of destination coodinate"
+					,"required" : "true"
+				},
+				"destination_longitude" : {
+					"type" : "decimal",
+					"description": "Longitude of destination coodinate"
+					,"required" : "true"
+				},
+				"destination_place_name" : {
+					"type" : "string",
+					"description": "Optional place name title, possibly from geocoding"
+					,"required" : "false"
+				}
+			}
+		}
+	}
+}

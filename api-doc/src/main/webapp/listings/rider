@@ -1,0 +1,40 @@
+{
+  "apiVersion": "1.0.0",
+  "swaggerVersion": "1.2",
+  "basePath": "/api",
+  "resourcePath": "/rider",
+  "produces": [
+    "application/json"
+  ],
+  "apis": [
+ {
+      "path": "publish_location",
+      "operations": [
+        {
+          "method": "POST",
+          "summary": "Allow the riders location to be shared with driver about to pick them up.  Not a persistent setting, should toggle back to off once the rider is picked up",
+          "notes": "No parameters are necessary since the server knows the rider from Authorization header",
+          "type": "Success",
+          "nickname": "publishLocation",
+          "consumes": [
+            "application/json"
+          ],
+          "parameters": [
+          ],
+          "responseMessages": [
+            {
+              "code": 401,
+              "message": "Access Denied"
+            },
+            {
+              "code": 403,
+              "message": "Forbidden",
+              "description" : "This rider is not allowed to publish location",
+							"notes" : "This code may not be used"
+            }
+          ]
+        }
+      ]
+    }
+	]
+}

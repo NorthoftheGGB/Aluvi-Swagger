@@ -1,0 +1,230 @@
+{
+  "apiVersion": "1.0.0",
+  "swaggerVersion": "1.2",
+  "basePath": "/api",
+  "resourcePath": "/geo",
+  "produces": [
+    "application/json"
+  ],
+  "apis": [
+    {
+      "path": "car/{id}",
+      "operations": [
+        {
+          "method": "PUT",
+          "summary": "Update a car's location",
+          "notes": "",
+          "type": "Success",
+          "nickname": "updateCarLocation",
+          "consumes": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "description": "Id of this car",
+              "required": true,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "location",
+              "description": "Location of this car",
+              "required": true,
+              "type": "Location",
+              "paramType": "body"
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": 401,
+              "message": "Access Denied"
+            },
+            {
+              "code": 404,
+              "message": "Entity not found",
+							"description" : "The car with the request id was not found"
+            }
+					]
+				}
+			]
+		}
+		,
+    {
+      "path": "car/{id}",
+      "operations": [
+        {
+          "method": "GET",
+          "summary": "Get a car's location",
+          "notes": "",
+          "type": "Location",
+          "nickname": "getCarLocation",
+          "consumes": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "description": "Id of this car",
+              "required": true,
+              "type": "string",
+              "paramType": "path"
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": 401,
+              "message": "Access Denied"
+            },
+            {
+              "code": 404,
+              "message": "Entity not found",
+							"description" : "The car with the request id was not found"
+            }
+					]
+				}
+			]
+		}
+		,
+    {
+      "path": "rider/{id}",
+      "operations": [
+        {
+          "method": "PUT",
+          "summary": "Update a rider's location",
+          "notes": "",
+          "type": "Success",
+          "nickname": "updateRiderLocation",
+          "consumes": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "description": "Id of this rider",
+              "required": true,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "location",
+              "description": "Location of this rider",
+              "required": true,
+              "type": "Location",
+              "paramType": "body"
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": 401,
+              "message": "Access Denied"
+            },
+            {
+              "code": 404,
+              "message": "Entity not found",
+							"description" : "The car with the request id was not found"
+            }
+					]
+				}
+			]
+		}
+		,
+			{
+				"path": "rider/{id}",
+				"operations": [
+				{
+					"method": "GET",
+					"summary": "Get a rider's location",
+					"notes": "",
+					"type": "Location",
+					"nickname": "getRiderLocation",
+					"consumes": [
+						"application/json"
+						],
+					"parameters": [
+					{
+						"name": "id",
+						"description": "Id of this rider",
+						"required": true,
+						"type": "string",
+						"paramType": "path"
+					}
+					],
+						"responseMessages": [
+						{
+							"code": 401,
+							"message": "Access Denied"
+						},
+						{
+							"code": 404,
+							"message": "Entity not found",
+							"description" : "The car with the request id was not found"
+						}
+					]
+				}
+				]
+			}
+		,
+			{
+				"path": "cars",
+				"operations": [
+				{
+					"method": "GET",
+					"summary": "Locations of all cars in the system",
+					"notes": "Not decided if this information should be combined into a status api (with rider status) or a car api (with other car details).  Also consider a POST version that takes a bounding box to ease map display",
+					"type": "array",
+					"item": {
+						"$ref" : "CarLocation"
+					},
+					"nickname": "getCarLocations",
+					"consumes": [
+						"application/json"
+						],
+					"responseMessages": [
+					{
+						"code": 401,
+						"message": "Access Denied"
+					}
+					]
+				}
+				]
+			},
+			{
+				"path": "service_area",
+				"operations": [
+				{
+					"method": "GET",
+					"summary": "Bounding box of service area",
+					"type": "GeoJson",
+					"nickname": "getServiceArea",
+					"consumes": [
+						"application/json"
+						],
+					"responseMessages": [
+					{
+						"code": 401,
+						"message": "Access Denied"
+					}
+					]
+				}
+				]
+			}
+		],
+	"models" : {
+		"Location" : {
+			"id" : "Location" ,
+			"properties" : {
+				"latitude" : {
+					"type" : "decimal",
+					"description": "Latitude of an entity"
+					,"required" : "true"
+				},
+				"longitude" : {
+					"type" : "decimal",
+					"description": "Longitude of an entity"
+					,"required" : "true"
+				}
+			}
+		}
+	}
+}
