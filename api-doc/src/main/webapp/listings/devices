@@ -1,0 +1,75 @@
+{
+  "apiVersion": "1.0.0",
+  "swaggerVersion": "1.2",
+  "basePath": "/api",
+  "resourcePath": "/devices",
+  "produces": [
+    "application/json"
+  ],
+  "apis": [
+    {
+      "path": ":udid",
+      "operations": [
+        {
+          "method": "PATCH",
+          "summary": "Create or update device record",
+          "notes": "",
+          "type": "Success",
+          "nickname": "updateCarLocation",
+          "consumes": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "udid",
+              "description": "UDID  of this device",
+              "required": true,
+              "type": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "device",
+              "description": "Details of this device",
+              "required": true,
+              "type": "Location",
+              "paramType": "body"
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": 401,
+              "message": "Access Denied"
+            }
+					]
+				}
+			]
+		}
+	],
+	"models" : {
+		"Device" : {
+			"id" : "Device" ,
+			"properties" : {
+				"user_id" : {
+					"type" : "integer",
+					"description" : "current user_id for user using this device",
+					"required" : true
+				},
+				"push_token" : {
+					"type" : "string",
+					"description" : "current push token for this device",
+					"required" : false
+				},
+				"latitude" : {
+					"type" : "decimal",
+					"description": "Latitude of an entity"
+					,"required" : false
+				},
+				"longitude" : {
+					"type" : "decimal",
+					"description": "Longitude of an entity"
+					,"required" : false
+				}
+			}
+		}
+	}
+}

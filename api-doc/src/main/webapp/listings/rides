@@ -14,7 +14,7 @@
           "method": "POST",
           "summary": "Request ride from scheduler",
           "notes": "",
-          "type": "Empty",
+          "type": "RideRequestCreated",
           "nickname": "requestRide",
           "consumes": [
             "application/json"
@@ -43,23 +43,53 @@
 			]
 		},
     {
-      "path": "state/{last_received_sequence_id}",
+      "path": "offers/:driver_id",
       "operations": [
         {
           "method": "GET",
-          "summary": "Get state changes since last sync",
+          "summary": "Get offered and underway drives",
           "notes": "Paired with sync to sync state push message",
 					"type": "array",
 					"items": {
-						"$ref": "State"
+						"$ref": "Offer"
 					},
-					"nickname": "checkState",
+					"nickname": "offersForDriver",
 					"parameters": [
 					{
-						"name": "last_received_sequence_id",
-						"description": "Last sequence id that was received by user/device",
+						"name": "driver_id",
+						"description": "User id of the driver",
 						"required": true,
-						"type": "string", 
+						"type": "integer", 
+						"paramType": "path"
+					}
+          ],
+          "responseMessages": [
+            {
+              "code": 401,
+              "message": "Access Denied"
+            }
+					]
+				}
+			]
+		},
+    {
+      "path": ":rider_id",
+      "operations": [
+        {
+          "method": "GET",
+          "summary": "Get requested and underway rides",
+          "notes": "Should this be linked to device rather than rider id ?",
+					"type": "array",
+					"items": {
+						"$ref": "Ride"
+					},
+					"nickname": "ridersForRider",
+					"parameters": [
+					{
+						"name": "rider_id",
+						"description": "User id of the rider",
+						"required": true,
+						"type": "integer", 
 						"paramType": "path"
 					}
           ],
@@ -94,6 +124,10 @@
             {
               "code": 401,
               "message": "Access Denied"
+            },
+            {
+              "code": 403,
+              "message": "Ride is no longer available"
             }
 					]
 				}
@@ -103,7 +137,7 @@
       "path": "declined",
       "operations": [
         {
-          "method": "GET",
+          "method": "POST",
           "summary": "Driver declined an offered ride",
           "notes": "",
 					"type": "Message",
@@ -121,20 +155,28 @@
             {
               "code": 401,
               "message": "Access Denied"
+            },
+            {
+              "code": 403,
+              "message": "Ride is no longer available"
+            },
+            {
+              "code": 404,
+              "message": "Already assigned to this driver"
             }
 					]
 				}
 			]
 		},
     {
-      "path": "cancelled",
+      "path": "driver_cancelled",
       "operations": [
         {
           "method": "POST",
-          "summary": "Get state changes since last sync",
+          "summary": "Driver cancelled ride",
           "notes": "",
 					"type": "Message",
-					"nickname": "cancelledRide",
+					"nickname": "driverCancelledRide",
 					"parameters": [
 					{
 						"name": "ride_assignment",
@@ -154,6 +196,37 @@
 			]
 		},
     {
+      "path": "rider_cancelled",
+      "operations": [
+        {
+          "method": "POST",
+          "summary": "Rider cancelled ride",
+          "notes": "",
+					"type": "Message",
+					"nickname": "riderCancelledRide",
+					"parameters": [
+					{
+						"name": "ride_assignment",
+						"description": "Ride and rider",
+						"required": true,
+						"type": "RiderAndRide",
+						"paramType": "body"
+					}
+          ],
+          "responseMessages": [
+            {
+              "code": 401,
+              "message": "Access Denied"
+            },
+            {
+              "code": 403,
+              "message": "The ride cannot be cancelled because it has already been started"
+            }
+					]
+				}
+			]
+		},
+    {
       "path": "pickup",
       "operations": [
         {
@@ -167,7 +240,34 @@
 						"name": "pickup",
 						"description": "Ride, driver and rider",
 						"required": true,
-						"type": "PickupEvent",
+						"type": "RiderAndRide",
+						"paramType": "body"
+					}
+          ],
+          "responseMessages": [
+            {
+              "code": 401,
+              "message": "Access Denied"
+            }
+					]
+				}
+			]
+		},
+    {
+      "path": "arrived",
+      "operations": [
+        {
+          "method": "POST",
+          "summary": "The driver has dropped off the rider(s)",
+          "notes": "",
+					"type": "Message",
+					"nickname": "cancelledRide",
+					"parameters": [
+					{
+						"name": "arrived",
+						"description": "Ride, driver and rider",
+						"required": true,
+						"type": "RiderAndRide",
 						"paramType": "body"
 					}
           ],
@@ -182,14 +282,15 @@
 		}
 
 
+
 	],
 	"models" : {
 		"RideRequest" : {
 			"id" : "RideRequest",
 			"properties" : {
-				"customer_id" : {
+				"rider_id" : {
 					"type" : "integer",
-					"description": "Customer Id"
+					"description": "Rider Id"
 					,"required" : "true"
 				},
 				"type" : {
@@ -229,6 +330,16 @@
 				}
 			}
 		},
+		"RideRequestCreated" : {
+			"id" : "RideRequestCreated",
+			"properties" : {
+				"request_id" : {
+					"type" : "integer",
+					"description" : "Ride request id",
+					"required" : true
+				}
+			}
+		},
 		"State" : {
 			"id" : "State",
 			"properties" : {
@@ -264,12 +375,27 @@
 				}
 			}
 		},
+		"RiderAndRide" : {
+			"id" : "RiderAndRide",
+			"properties" : {
+				"ride_id" : {
+					"type" : "integer",
+					"description": "Ride Id"
+					,"required" : "true"
+				},
+				"rider_id" : {
+					"type" : "integer",
+					"description": "Rider Id"
+					,"required" : "true"
+				}
+			}
+		},
 		"RideRequestAssignment" : {
 			"id" : "RideRequestAssignment",
 			"properties" : {
-				"request_id" : {
+				"ride_id" : {
 					"type" : "integer",
-					"description": "Request Id"
+					"description": "Ride Id"
 					,"required" : "true"
 				},
 				"driver_id" : {

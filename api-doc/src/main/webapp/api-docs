@@ -11,6 +11,10 @@
       "description": "Geolocation"
     },
     {
+      "path": "http://localhost:8000/listings/devices",
+      "description": "Devices"
+    },
+    {
       "path": "http://localhost:8000/listings/driver",
       "description": "Driver Info and Settings"
     },
